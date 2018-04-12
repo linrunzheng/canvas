@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title></title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding-top:25px;
+        }
+
+        canvas {
+            display: block;
+            border:1px solid #aaa;
+            margin:0 auto;
+        }
+        
+        #btnContainer{
+            margin-top:30px;
+            text-align: center;
+        }
+        #btnContainer input{
+            height:25px;
+            width:200px;
+            margin-right:25px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas">Canvas is not supported in your browser.</canvas>
+    <div id="btnContainer">
+        <input type="text" id="input">
+        <button id="btn">增加弹幕</button>
+    </div>
+    <script type="text/javascript">
+        let canvas = document.querySelector("#canvas");
+        let ctx = canvas.getContext("2d");
+        let input =document.querySelector("#input");
+        let btn =document.querySelector("#btn");
+
+        let innerWidth = window.innerWidth*0.8;
+        let innerHeight =600;
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+        
+
+        let wordLsit = [];
+        let uuid = 0;
+        function random(number=1){
+            return Math.random()*number;
+        }
+
+        function randomColor(){
+            return `rgba(${parseInt(random(255))},${parseInt(random(255))},${parseInt(random(255))},${random()+0.4})`
+        }
+
+        const randomText=[
+            '追了，追了',
+            '某科学的超电磁炮',
+            '哈哈哈',
+            '表面稳如老狗，心里慌得一批',
+            '新田是钻石王老五黑道',
+            '真的好看w',
+            '嫌弃的眼神',
+            '你真的是黑道吗？',
+            '你家为什么会有女装',
+            '这。。。。哈哈哈',
+            '什么鬼啊',
+            '倒回去看上面字幕'
+        ]
+
+
+
+        class Word {
+            constructor(options) {
+                this.id = options.id;
+                this.color = options.color;
+                this.x = options.x;
+                this.y = options.y;
+                this.word = options.word;
+                this.fontSize = options.fontSize;
+                this.speed=options.speed;
+                this.type=Math.random();
+            }
+            draw() {                   
+                ctx.font = `${this.fontSize}px Arial`;
+                if(this.type>0.5){
+                    ctx.fillStyle =this.color;
+                    ctx.fillText(this.word, this.x, this.y);
+                }else{
+                    ctx.strokeStyle = this.color; 
+                    ctx.strokeText(this.word, this.x, this.y);
+                }             
+            }
+            destory() {           
+                let id = this.id;
+                wordLsit =wordLsit.filter(item => {
+                    return item.id != id
+                })
+            }
+            update() {
+                let textWidth=ctx.measureText(this.text).width; 
+                this.x -= this.speed;
+                this.x+textWidth*2<0? this.destory() : this.draw();
+            }
+        }
+        
+
+        function pushWord(word){
+            let config={
+                id:++uuid,
+                x:innerWidth,
+                y:random(innerHeight),
+                color:randomColor(),
+                word,
+                fontSize:random(30)+ 15,
+                speed:random(5)+ 1
+            }
+
+            wordLsit.push(new Word(config));
+        }
+       
+
+
+        (function start() {
+            ctx.clearRect(0,0,innerWidth,innerHeight);
+            wordLsit.forEach(v=>v.update()); 
+            requestAnimationFrame(start);        
+        })()
+
+        setInterval(function(){
+            let index=Math.floor(Math.random()*randomText.length);
+            let text=randomText[index];
+            pushWord(text);
+        },500)
+
+        btn.addEventListener("click",function(){
+            let text=input.value;
+            pushWord(text);
+            input.value='';
+        },false)
+
+
+    </script>
+</body>
+
+</html>
