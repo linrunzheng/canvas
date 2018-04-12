@@ -45,7 +45,7 @@
             canvas.width = innerWidth;
             canvas.height = innerHeight;
         
-
+       /*  存放绘制的文字数组 */
         let wordLsit = [];
         let uuid = 0;
         function random(number=1){
@@ -56,6 +56,7 @@
             return `rgba(${parseInt(random(255))},${parseInt(random(255))},${parseInt(random(255))},${random()+0.4})`
         }
 
+        /* 随机弹幕文字 */
         const randomText=[
             '追了，追了',
             '某科学的超电磁炮',
@@ -73,6 +74,7 @@
 
 
 
+       /*  定义一个生成随机文字颜色，大小，位置的类 */
         class Word {
             constructor(options) {
                 this.id = options.id;
@@ -94,6 +96,7 @@
                     ctx.strokeText(this.word, this.x, this.y);
                 }             
             }
+           /*  超出屏幕后从数组移除，不再绘制 */
             destory() {           
                 let id = this.id;
                 wordLsit =wordLsit.filter(item => {
@@ -108,6 +111,7 @@
         }
         
 
+       /*  向文字数组添加一个文字 */
         function pushWord(word){
             let config={
                 id:++uuid,
@@ -123,18 +127,20 @@
         }
        
 
-
+        
         (function start() {
             ctx.clearRect(0,0,innerWidth,innerHeight);
             wordLsit.forEach(v=>v.update()); 
             requestAnimationFrame(start);        
         })()
 
+        /* 每0.5秒随机生成一个文字 */
         setInterval(function(){
             let index=Math.floor(Math.random()*randomText.length);
             let text=randomText[index];
             pushWord(text);
         },500)
+
 
         btn.addEventListener("click",function(){
             let text=input.value;
