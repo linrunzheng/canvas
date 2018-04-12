@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title></title>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            cursor: crosshair;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas">Canvas is not supported in your browser.</canvas>
+    <script type="text/javascript">
+        var canvas=document.querySelector("#canvas");
+        var innerWidth= window.innerWidth;
+        var innerHeight= window.innerHeight;
+        canvas.width= innerWidth;
+        canvas.height= innerHeight;
+        var ctx=canvas.getContext("2d");
+
+
+        class Ball{
+            constructor(options){
+                this.x=options.x;
+                this.y=options.y;
+                this.radius= options.radius;
+                this.speedX= options.speedX;
+                this.speedY= options.speedY;
+                this.color=options.color;
+            }
+            draw(){   
+                ctx.fillStyle=this.color;         
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();               
+            }
+            move(){            
+
+                if(this.x+this.radius> innerWidth||this.x-this.radius<0){
+                    this.speedX=-this.speedX;
+                }   
+                if(this.y+this.radius> innerHeight || this.y - this.radius < 0){
+                    this.speedY=-this.speedY;
+                }   
+
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                this.draw();
+            }
+        }
+
+        var BallList=[];
+        for (let i = 0; i < 20; i++) {
+            var x=Math.random()* innerWidth;
+            var y=Math.random()* innerHeight;
+            var radius=Math.random()*15+10;
+            var speedX=random(8)+2;
+            var speedY=random(5)+2;
+            var color=`rgba(${random(255)},${random(255)},${random(255)},${Math.random()})`;
+
+            var ball=new Ball({x,y, radius, speedX,speedY,color});
+            BallList.push(ball);
+                 
+        }
+
+
+        function startMoving(){
+            requestAnimationFrame(startMoving);
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            BallList.forEach(ball=>{
+                ball.move();
+            })
+        }
+
+       startMoving();
+
+
+
+       function random(range){
+           return Math.ceil(Math.random()*range);
+       }
+       
+    </script>
+</body>
+
+</html>
